@@ -544,7 +544,7 @@
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const source = audioCtx.createMediaElementSource(bgSong);
         const gainNode = audioCtx.createGain();
-        gainNode.gain.value = 2.5; // boost — itaas o ibaba kung kailangan
+        gainNode.gain.value = 4.5
         source.connect(gainNode);
         gainNode.connect(audioCtx.destination);
       } catch (err) {
