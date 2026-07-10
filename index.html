@@ -30,7 +30,7 @@
   #stage {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     background: linear-gradient(160deg, #16305C 0%, #3B6FD1 55%, #E8425A 100%);
   }
@@ -183,15 +183,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
     text-align: center;
-    padding: 90px 32px 60px;
+    padding: 60px 32px;
     opacity: 0;
     pointer-events: none;
     transform: scale(0.94);
     transition: opacity 0.7s ease, transform 0.7s ease;
     overflow-y: auto;
-}
+  }
   .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
 
   .eyebrow {
@@ -211,13 +211,13 @@
   .name-blank { color: var(--red); border-bottom: 3px dashed var(--red); padding: 0 6px; }
 
   p.body-text {
-  font-size: 17px;
-  color: var(--text-soft);
-  max-width: 320px;
-  line-height: 1.7;
-  margin-top: 16px;
-  margin-left: auto;
-  margin-right: auto;
+    font-size: 17px;
+    color: var(--text-soft);
+    max-width: 320px;
+    line-height: 1.7;
+    margin-top: 16px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .tap-hint {
@@ -365,27 +365,22 @@
   @keyframes confettiFall { to { transform: translateY(110vh) rotate(540deg); opacity: 0.3; } }
 
   .final-message {
-  opacity: 0;
-  transition: opacity 0.8s ease 0.3s;
-  width: 100%;
-}
+    opacity: 0;
+    transition: opacity 0.8s ease 0.3s;
+    width: 100%;
+  }
   .final-message.show { opacity: 1; }
 
   .heart-row { display: flex; gap: 10px; margin-top: 18px; font-size: 20px; }
 
   .album-grid {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  justify-content: center;
-  max-width: 400px;
-  margin-top: 8px;
-}
-  .polaroid { background: #fff; padding: 10px 10px 26px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.25); width: 128px; }
-  .polaroid:nth-child(odd) { transform: rotate(-5deg); }
-  .polaroid:nth-child(even) { transform: rotate(4deg); }
-  .polaroid img { width: 100%; height: 110px; object-fit: cover; display: block; background: #eee; }
-  .polaroid span { display: block; font-family: 'Fredoka', sans-serif; font-size: 11px; color: var(--navy); text-align: center; margin-top: 6px; }
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 400px;
+    margin-top: 8px;
+  }
   .polaroid { background: #fff; padding: 10px 10px 26px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.25); width: 128px; }
   .polaroid:nth-child(odd) { transform: rotate(-5deg); }
   .polaroid:nth-child(even) { transform: rotate(4deg); }
