@@ -751,7 +751,10 @@
 
   document.getElementById('replayConfettiBtn').addEventListener('click', function(e) {
     e.stopPropagation();
-    document.querySelectorAll('.confetti-piece').forEach(piece => piece.remove());
+    // Spammable: each tap adds a fresh batch on top of whatever's
+    // already falling, instead of clearing it first. Pieces clean
+    // themselves up on their own after they finish falling, so
+    // nothing piles up forever.
     launchConfetti();
   });
 
