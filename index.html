@@ -366,10 +366,16 @@
 
   .final-message {
     opacity: 0;
-    transition: opacity 0.8s ease 0.3s;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.8s ease 0.3s, max-height 0s linear 0.8s;
     width: 100%;
-  }
-  .final-message.show { opacity: 1; }
+}
+.final-message.show {
+    opacity: 1;
+    max-height: 1000px;
+    transition: opacity 0.8s ease 0.3s, max-height 0s linear 0s;
+}
 
   .heart-row { display: flex; gap: 10px; margin-top: 18px; font-size: 20px; }
 
