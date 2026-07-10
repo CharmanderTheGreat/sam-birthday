@@ -2,7 +2,7 @@
 <html lang="tl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Happy Birthday!</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600&display=swap');
@@ -24,19 +24,51 @@
     height: 100%;
     overflow: hidden;
     font-family: 'Quicksand', sans-serif;
+    background: #0B1830;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+  }
+
+  #phoneFrame {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    height: calc(var(--vh, 1vh) * 100);
+    max-height: 900px;
+    overflow: hidden;
     background: var(--navy);
   }
 
+  @media (min-width: 431px) and (min-height: 901px) {
+    #phoneFrame {
+      border-radius: 36px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #05070d;
+    }
+  }
+  @media (min-width: 431px) and (max-height: 900px) {
+    #phoneFrame {
+      height: min(calc(var(--vh, 1vh) * 100), 900px);
+      border-radius: 36px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 8px #05070d;
+    }
+  }
+
   #stage {
-    position: relative;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: 100dvh;
+    height: 100%;
     overflow: hidden;
     background: linear-gradient(160deg, #16305C 0%, #3B6FD1 55%, #E8425A 100%);
   }
 
   #lockScreen {
-    position: fixed;
+    position: absolute;
     inset: 0;
     z-index: 50;
     display: flex;
@@ -44,7 +76,7 @@
     align-items: center;
     justify-content: center;
     background: linear-gradient(160deg, #2E5EAA 0%, #3B6FD1 45%, #E8425A 100%);
-    padding: 32px;
+    padding: max(32px, env(safe-area-inset-top)) 32px max(32px, env(safe-area-inset-bottom));
     text-align: center;
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
@@ -115,9 +147,9 @@
   .lock-error.show { opacity: 1; }
 
   .mute-toggle {
-    position: fixed;
-    top: 22px;
-    right: 22px;
+    position: absolute;
+    top: max(22px, env(safe-area-inset-top));
+    right: max(22px, env(safe-area-inset-right));
     z-index: 40;
     width: 46px;
     height: 46px;
@@ -185,7 +217,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 60px 32px;
+    padding: max(60px, env(safe-area-inset-top)) 24px max(60px, env(safe-area-inset-bottom));
     opacity: 0;
     pointer-events: none;
     transform: scale(0.94);
@@ -222,7 +254,7 @@
 
   .tap-hint {
     position: absolute;
-    bottom: 34px;
+    bottom: max(34px, env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     font-size: 13px;
@@ -380,149 +412,169 @@
   .heart-row { display: flex; gap: 10px; margin-top: 18px; font-size: 20px; }
 
   .album-grid {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 18px;
-    flex-wrap: wrap;
     justify-content: center;
-    max-width: 400px;
-    margin-top: 8px;
+    justify-items: center;
+    max-width: 340px;
+    margin: 8px auto 0;
   }
-  .polaroid { background: #fff; padding: 10px 10px 26px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.25); width: 128px; }
-  .polaroid:nth-child(odd) { transform: rotate(-5deg); }
-  .polaroid:nth-child(even) { transform: rotate(4deg); }
-  .polaroid img { width: 100%; height: 110px; object-fit: cover; display: block; background: #eee; }
-  .polaroid span { display: block; font-family: 'Fredoka', sans-serif; font-size: 11px; color: var(--navy); text-align: center; margin-top: 6px; }
-
-  .polaroid.landscape {
-    width: 190px;
+  .polaroid { background: #fff; padding: 10px 10px 26px; border-radius: 4px; box-shadow: 0 8px 16px rgba(0,0,0,0.25); width: 100%; }
+  .polaroid:nth-child(1) { transform: rotate(-5deg); }
+  .polaroid:nth-child(2) { transform: rotate(4deg); }
+  .polaroid:nth-child(3) {
+    grid-column: 1 / span 2;
+    justify-self: center;
+    width: 60%;
+    transform: rotate(-2deg);
   }
-  .polaroid.landscape img {
-    height: 110px;
-    object-fit: cover;
-  }
+  .polaroid img { width: 100%; height: 90px; object-fit: cover; display: block; background: #eee; }
+  .polaroid span { display: block; font-family: 'Fredoka', sans-serif; font-size: 10px; color: var(--navy); text-align: center; margin-top: 6px; }
 </style>
 </head>
 <body>
 
 <audio id="bgSong" src="song.mp3" loop preload="auto"></audio>
-<button class="mute-toggle hidden-toggle" id="muteToggle">🔊</button>
 
-<div id="lockScreen">
-  <div class="lock-icon">🔒</div>
-  <div class="lock-title">enter the code</div>
-  <div class="lock-sub">type the code to unlock the surprise</div>
-  <div class="code-dots" id="codeDots">
-    <div class="code-dot"></div>
-    <div class="code-dot"></div>
-    <div class="code-dot"></div>
-    <div class="code-dot"></div>
-  </div>
-  <div class="keypad">
-    <button class="key" data-num="1">1</button>
-    <button class="key" data-num="2">2</button>
-    <button class="key" data-num="3">3</button>
-    <button class="key" data-num="4">4</button>
-    <button class="key" data-num="5">5</button>
-    <button class="key" data-num="6">6</button>
-    <button class="key" data-num="7">7</button>
-    <button class="key" data-num="8">8</button>
-    <button class="key" data-num="9">9</button>
-    <button class="key wide" id="clearKey">clear</button>
-    <button class="key" data-num="0">0</button>
-    <button class="key wide" id="backKey">⌫</button>
-  </div>
-  <div class="lock-error" id="lockError">hmm, try again 💭</div>
-</div>
+<div id="phoneFrame">
 
-<div id="stage">
+  <button class="mute-toggle hidden-toggle" id="muteToggle">🔊</button>
 
-  <div id="balloons"></div>
-
-  <div class="slide active" data-index="0">
-    <div class="ribbon-bow">🎀</div>
-    <div class="eyebrow">a little surprise</div>
-    <h1>For <span class="name-blank">Sammy</span></h1>
-    <p class="body-text">before you scroll, take a deep breath — this one's for you.</p>
-    <div class="tap-hint">tap anywhere to continue →</div>
-  </div>
-
-  <div class="slide" data-index="1">
-    <div class="eyebrow">first things first</div>
-    <h2>Happy birthday! Sam 🎉</h2>
-    <p class="body-text">Out of everyone in the world, you're still my favorite person to talk to, any time of day.</p>
-    <div class="tap-hint">tap for more →</div>
-  </div>
-
-  <div class="slide" data-index="2">
-    <div class="eyebrow">real talk</div>
-    <h2>Thank you for every story,<br>every laugh, every bit of chaos.</h2>
-    <p class="body-text">The late nights, the dumb jokes, the times I just needed someone to talk to — you were always there. I wouldn't trade that for anything.</p>
-    <div class="tap-hint">tap for more →</div>
-  </div>
-
-  <div class="slide" data-index="3">
-    <div class="eyebrow">one wish</div>
-    <h2>I hope you're always happy,<br>healthy, and at peace.</h2>
-    <p class="body-text">Whatever happens, just know there's someone who'll always catch you. That's me.</p>
-    <div class="heart-row">💛 🎈 ✨</div>
-    <div class="tap-hint">tap for photos →</div>
-  </div>
-
-  <div class="slide" data-index="4">
-    <div class="eyebrow">our memories</div>
-    <h2>A little throwback first</h2>
-    <div class="album-grid">
-      <div class="polaroid landscape"><img src="photo1.png" alt="photo 1"><span>when we first met</span></div>
-      <div class="polaroid landscape"><img src="photo2.png" alt="photo 2"><span>playing games every day with you</span></div>
-      <div class="polaroid landscape"><img src="photo3.jpg" alt="photo 3"><span>still going strong</span></div>
+  <div id="lockScreen">
+    <div class="lock-icon">🔒</div>
+    <div class="lock-title">enter the code</div>
+    <div class="lock-sub">type the code to unlock the surprise</div>
+    <div class="code-dots" id="codeDots">
+      <div class="code-dot"></div>
+      <div class="code-dot"></div>
+      <div class="code-dot"></div>
+      <div class="code-dot"></div>
     </div>
-    <div class="tap-hint">tap for cake →</div>
+    <div class="keypad">
+      <button class="key" data-num="1">1</button>
+      <button class="key" data-num="2">2</button>
+      <button class="key" data-num="3">3</button>
+      <button class="key" data-num="4">4</button>
+      <button class="key" data-num="5">5</button>
+      <button class="key" data-num="6">6</button>
+      <button class="key" data-num="7">7</button>
+      <button class="key" data-num="8">8</button>
+      <button class="key" data-num="9">9</button>
+      <button class="key wide" id="clearKey">clear</button>
+      <button class="key" data-num="0">0</button>
+      <button class="key wide" id="backKey">⌫</button>
+    </div>
+    <div class="lock-error" id="lockError">hmm, try again 💭</div>
   </div>
 
-  <div class="slide" data-index="5">
-    <div class="eyebrow">last step</div>
-    <h2>Make a wish Sam, then blow out the candle 🎀</h2>
-    <div class="cake-wrap" id="cakeWrap">
-      <div class="candle" id="candle">
-        <div class="flame" id="flame"></div>
-      </div>
-      <div class="tier tier-3">
-        <div class="pearl-border"></div>
-        <div class="drip-band"></div>
-        <div class="rosette" style="left:8px; background:radial-gradient(circle at 35% 35%, #fff, #FFC857);"></div>
-        <div class="rosette" style="left:44px; background:radial-gradient(circle at 35% 35%, #fff, var(--red));"></div>
-        <div class="rosette" style="left:80px; background:radial-gradient(circle at 35% 35%, #fff, var(--blue));"></div>
-      </div>
-      <div class="tier tier-2">
-        <div class="pearl-border"></div>
-        <div class="drip-band"></div>
-        <div class="sprinkle-dot" style="left:20px; background:#FFC857;"></div>
-        <div class="sprinkle-dot" style="left:50px; background:#fff;"></div>
-        <div class="sprinkle-dot" style="left:80px; background:#3B6FD1;"></div>
-        <div class="sprinkle-dot" style="left:110px; background:#FFC857;"></div>
-        <div class="sprinkle-dot" style="left:135px; background:#fff;"></div>
-      </div>
-      <div class="tier tier-1">
-        <div class="pearl-border"></div>
-      </div>
-      <div class="cake-plate"></div>
-      <div class="cake-shadow"></div>
-    </div>
-    <p class="body-text" id="candleHint" style="margin-top: 0;">tap the candle</p>
+  <div id="stage">
 
-    <div class="final-message" id="finalMessage">
-      <h1 style="margin-top: 32px;">Happy birthday, Sam! 🎂</h1>
-      <p class="body-text" style="margin-top: 14px;">I hope your wish comes true. Thank you for being you — love you so much, take care always and lagi lang me nandito for you. 💕</p>
-      <div class="music-controls">
-        <button class="music-btn" id="replayConfettiBtn">🎊 Replay confetti</button>
-        <button class="music-btn" id="watchAgainBtn">🔁 Watch again</button>
+    <div id="balloons"></div>
+
+    <div class="slide active" data-index="0">
+      <div class="ribbon-bow">🎀</div>
+      <div class="eyebrow">a little surprise</div>
+      <h1>For <span class="name-blank">Sammy</span></h1>
+      <p class="body-text">before you scroll, take a deep breath — this one's for you.</p>
+      <div class="tap-hint">tap anywhere to continue →</div>
+    </div>
+
+    <div class="slide" data-index="1">
+      <div class="eyebrow">first things first</div>
+      <h2>Happy birthday! Sam 🎉</h2>
+      <p class="body-text">Out of everyone in the world, you're still my favorite person to talk to, any time of day.</p>
+      <div class="tap-hint">tap for more →</div>
+    </div>
+
+    <div class="slide" data-index="2">
+      <div class="eyebrow">real talk</div>
+      <h2>Thank you for every story,<br>every laugh, every bit of chaos.</h2>
+      <p class="body-text">The late nights, the dumb jokes, the times I just needed someone to talk to — you were always there. I wouldn't trade that for anything.</p>
+      <div class="tap-hint">tap for more →</div>
+    </div>
+
+    <div class="slide" data-index="3">
+      <div class="eyebrow">one wish</div>
+      <h2>I hope you're always happy,<br>healthy, and at peace.</h2>
+      <p class="body-text">Whatever happens, just know there's someone who'll always catch you. That's me.</p>
+      <div class="heart-row">💛 🎈 ✨</div>
+      <div class="tap-hint">tap for photos →</div>
+    </div>
+
+    <div class="slide" data-index="4">
+      <div class="eyebrow">our memories</div>
+      <h2>A little throwback first</h2>
+      <div class="album-grid">
+        <div class="polaroid"><img src="photo1.png" alt="photo 1"><span>when we first met</span></div>
+        <div class="polaroid"><img src="photo2.png" alt="photo 2"><span>playing games every day with you</span></div>
+        <div class="polaroid"><img src="photo3.jpg" alt="photo 3"><span>still going strong</span></div>
+      </div>
+      <div class="tap-hint">tap for cake →</div>
+    </div>
+
+    <div class="slide" data-index="5">
+      <div class="eyebrow">last step</div>
+      <h2>Make a wish Sam, then blow out the candle 🎀</h2>
+      <div class="cake-wrap" id="cakeWrap">
+        <div class="candle" id="candle">
+          <div class="flame" id="flame"></div>
+        </div>
+        <div class="tier tier-3">
+          <div class="pearl-border"></div>
+          <div class="drip-band"></div>
+          <div class="rosette" style="left:8px; background:radial-gradient(circle at 35% 35%, #fff, #FFC857);"></div>
+          <div class="rosette" style="left:44px; background:radial-gradient(circle at 35% 35%, #fff, var(--red));"></div>
+          <div class="rosette" style="left:80px; background:radial-gradient(circle at 35% 35%, #fff, var(--blue));"></div>
+        </div>
+        <div class="tier tier-2">
+          <div class="pearl-border"></div>
+          <div class="drip-band"></div>
+          <div class="sprinkle-dot" style="left:20px; background:#FFC857;"></div>
+          <div class="sprinkle-dot" style="left:50px; background:#fff;"></div>
+          <div class="sprinkle-dot" style="left:80px; background:#3B6FD1;"></div>
+          <div class="sprinkle-dot" style="left:110px; background:#FFC857;"></div>
+          <div class="sprinkle-dot" style="left:135px; background:#fff;"></div>
+        </div>
+        <div class="tier tier-1">
+          <div class="pearl-border"></div>
+        </div>
+        <div class="cake-plate"></div>
+        <div class="cake-shadow"></div>
+      </div>
+      <p class="body-text" id="candleHint" style="margin-top: 0;">tap the candle</p>
+
+      <div class="final-message" id="finalMessage">
+        <h1 style="margin-top: 32px;">Happy birthday, Sam! 🎂</h1>
+        <p class="body-text" style="margin-top: 14px;">I hope your wish comes true. Thank you for being you — love you so much, take care always and lagi lang me nandito for you. 💕</p>
+        <div class="music-controls">
+          <button class="music-btn" id="replayConfettiBtn">🎊 Replay confetti</button>
+          <button class="music-btn" id="watchAgainBtn">🔁 Watch again</button>
+        </div>
       </div>
     </div>
+
   </div>
 
 </div>
 
 <script>
+  // Cross-browser viewport height fix.
+  // Different mobile browsers (Chrome, Brave, Safari, etc.) show/hide their
+  // address bar / toolbar differently, so 100vh / 100dvh reports different
+  // things in each one. This measures the *actual* usable height and stores
+  // it in a CSS variable, so the layout matches on every browser.
+  function setRealVH() {
+    const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
+  }
+  setRealVH();
+  window.addEventListener('resize', setRealVH);
+  window.addEventListener('orientationchange', () => setTimeout(setRealVH, 150));
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', setRealVH);
+  }
+
   const SECRET_CODE = "0711";
 
   let enteredCode = "";
