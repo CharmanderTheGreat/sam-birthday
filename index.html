@@ -209,13 +209,29 @@
     100% { transform: translateY(-115vh) translateX(-10px) rotate(-3deg); }
   }
 
+  /*
+    FIX: .slide used to be `justify-content: center` on a scrollable
+    flex column. That combo is a known cross-browser bug: some mobile
+    browsers/webviews don't let you scroll "up" into content that
+    got centered past the top edge, so when a slide's content got
+    taller than the screen (like the last slide once the final
+    message + buttons appear), the top of it — including the
+    confetti/replay buttons — became unreachable.
+
+    Fix: the slide itself no longer centers its children. It just
+    stacks them from the top and scrolls normally. Centering (when
+    content is shorter than the screen) is done by the new
+    .slide-content wrapper below using margin: auto 0, which is a
+    trick that centers when there's extra room but never pushes
+    content above the scrollable area when it overflows.
+  */
   .slide {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     text-align: center;
     padding: max(60px, env(safe-area-inset-top)) 24px max(60px, env(safe-area-inset-bottom));
     opacity: 0;
@@ -223,8 +239,17 @@
     transform: scale(0.94);
     transition: opacity 0.7s ease, transform 0.7s ease;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .slide.active { opacity: 1; pointer-events: auto; transform: scale(1); }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: auto 0;
+  }
 
   .eyebrow {
     font-family: 'Quicksand', sans-serif;
@@ -252,11 +277,15 @@
     margin-right: auto;
   }
 
+  /*
+    tap-hint used to be position:absolute pinned to the bottom of the
+    slide. On a scrolling slide that overlaps real content (like the
+    album grid or the cake), so now it's laid out inline after the
+    slide-content instead, still centered, just no longer floating on
+    top of anything.
+  */
   .tap-hint {
-    position: absolute;
-    bottom: max(34px, env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
+    margin-top: 28px;
     font-size: 13px;
     color: var(--text-soft);
     font-weight: 500;
@@ -272,14 +301,6 @@
 
   .cake-wrap { position: relative; width: 230px; height: 230px; margin-top: 20px; margin-bottom: 10px; }
 
-  .slide[data-index="5"] {
-    justify-content: center;
-    gap: 10px;
-  }
-
-  .slide[data-index="5"] .final-message {
-    margin-top: 10px;
-  }
   .cake-shadow {
     position: absolute;
     bottom: -16px;
@@ -473,83 +494,95 @@
     <div id="balloons"></div>
 
     <div class="slide active" data-index="0">
-      <div class="ribbon-bow">🎀</div>
-      <div class="eyebrow">a little surprise</div>
-      <h1>For <span class="name-blank">Sammy</span></h1>
-      <p class="body-text">before you scroll, take a deep breath — this one's for you.</p>
-      <div class="tap-hint">tap anywhere to continue →</div>
+      <div class="slide-content">
+        <div class="ribbon-bow">🎀</div>
+        <div class="eyebrow">a little surprise</div>
+        <h1>For <span class="name-blank">Sammy</span></h1>
+        <p class="body-text">before you scroll, take a deep breath — this one's for you.</p>
+        <div class="tap-hint">tap anywhere to continue →</div>
+      </div>
     </div>
 
     <div class="slide" data-index="1">
-      <div class="eyebrow">first things first</div>
-      <h2>Happy birthday! Sam 🎉</h2>
-      <p class="body-text">Out of everyone in the world, you're still my favorite person to talk to, any time of day.</p>
-      <div class="tap-hint">tap for more →</div>
+      <div class="slide-content">
+        <div class="eyebrow">first things first</div>
+        <h2>Happy birthday! Sam 🎉</h2>
+        <p class="body-text">Out of everyone in the world, you're still my favorite person to talk to, any time of day.</p>
+        <div class="tap-hint">tap for more →</div>
+      </div>
     </div>
 
     <div class="slide" data-index="2">
-      <div class="eyebrow">real talk</div>
-      <h2>Thank you for every story,<br>every laugh, every bit of chaos.</h2>
-      <p class="body-text">The late nights, the dumb jokes, the times I just needed someone to talk to — you were always there. I wouldn't trade that for anything.</p>
-      <div class="tap-hint">tap for more →</div>
+      <div class="slide-content">
+        <div class="eyebrow">real talk</div>
+        <h2>Thank you for every story,<br>every laugh, every bit of chaos.</h2>
+        <p class="body-text">The late nights, the dumb jokes, the times I just needed someone to talk to — you were always there. I wouldn't trade that for anything.</p>
+        <div class="tap-hint">tap for more →</div>
+      </div>
     </div>
 
     <div class="slide" data-index="3">
-      <div class="eyebrow">one wish</div>
-      <h2>I hope you're always happy,<br>healthy, and at peace.</h2>
-      <p class="body-text">Whatever happens, just know there's someone who'll always catch you. That's me.</p>
-      <div class="heart-row">💛 🎈 ✨</div>
-      <div class="tap-hint">tap for photos →</div>
+      <div class="slide-content">
+        <div class="eyebrow">one wish</div>
+        <h2>I hope you're always happy,<br>healthy, and at peace.</h2>
+        <p class="body-text">Whatever happens, just know there's someone who'll always catch you. That's me.</p>
+        <div class="heart-row">💛 🎈 ✨</div>
+        <div class="tap-hint">tap for photos →</div>
+      </div>
     </div>
 
     <div class="slide" data-index="4">
-      <div class="eyebrow">our memories</div>
-      <h2>A little throwback first</h2>
-      <div class="album-grid">
-        <div class="polaroid"><img src="photo1.png" alt="photo 1"><span>when we first met</span></div>
-        <div class="polaroid"><img src="photo2.png" alt="photo 2"><span>playing games every day with you</span></div>
-        <div class="polaroid"><img src="photo3.jpg" alt="photo 3"><span>still going strong</span></div>
+      <div class="slide-content">
+        <div class="eyebrow">our memories</div>
+        <h2>A little throwback first</h2>
+        <div class="album-grid">
+          <div class="polaroid"><img src="photo1.png" alt="photo 1"><span>when we first met</span></div>
+          <div class="polaroid"><img src="photo2.png" alt="photo 2"><span>playing games every day with you</span></div>
+          <div class="polaroid"><img src="photo3.jpg" alt="photo 3"><span>still going strong</span></div>
+        </div>
+        <div class="tap-hint">tap for cake →</div>
       </div>
-      <div class="tap-hint">tap for cake →</div>
     </div>
 
     <div class="slide" data-index="5">
-      <div class="eyebrow">last step</div>
-      <h2>Make a wish Sam, then blow out the candle 🎀</h2>
-      <div class="cake-wrap" id="cakeWrap">
-        <div class="candle" id="candle">
-          <div class="flame" id="flame"></div>
+      <div class="slide-content">
+        <div class="eyebrow">last step</div>
+        <h2>Make a wish Sam, then blow out the candle 🎀</h2>
+        <div class="cake-wrap" id="cakeWrap">
+          <div class="candle" id="candle">
+            <div class="flame" id="flame"></div>
+          </div>
+          <div class="tier tier-3">
+            <div class="pearl-border"></div>
+            <div class="drip-band"></div>
+            <div class="rosette" style="left:8px; background:radial-gradient(circle at 35% 35%, #fff, #FFC857);"></div>
+            <div class="rosette" style="left:44px; background:radial-gradient(circle at 35% 35%, #fff, var(--red));"></div>
+            <div class="rosette" style="left:80px; background:radial-gradient(circle at 35% 35%, #fff, var(--blue));"></div>
+          </div>
+          <div class="tier tier-2">
+            <div class="pearl-border"></div>
+            <div class="drip-band"></div>
+            <div class="sprinkle-dot" style="left:20px; background:#FFC857;"></div>
+            <div class="sprinkle-dot" style="left:50px; background:#fff;"></div>
+            <div class="sprinkle-dot" style="left:80px; background:#3B6FD1;"></div>
+            <div class="sprinkle-dot" style="left:110px; background:#FFC857;"></div>
+            <div class="sprinkle-dot" style="left:135px; background:#fff;"></div>
+          </div>
+          <div class="tier tier-1">
+            <div class="pearl-border"></div>
+          </div>
+          <div class="cake-plate"></div>
+          <div class="cake-shadow"></div>
         </div>
-        <div class="tier tier-3">
-          <div class="pearl-border"></div>
-          <div class="drip-band"></div>
-          <div class="rosette" style="left:8px; background:radial-gradient(circle at 35% 35%, #fff, #FFC857);"></div>
-          <div class="rosette" style="left:44px; background:radial-gradient(circle at 35% 35%, #fff, var(--red));"></div>
-          <div class="rosette" style="left:80px; background:radial-gradient(circle at 35% 35%, #fff, var(--blue));"></div>
-        </div>
-        <div class="tier tier-2">
-          <div class="pearl-border"></div>
-          <div class="drip-band"></div>
-          <div class="sprinkle-dot" style="left:20px; background:#FFC857;"></div>
-          <div class="sprinkle-dot" style="left:50px; background:#fff;"></div>
-          <div class="sprinkle-dot" style="left:80px; background:#3B6FD1;"></div>
-          <div class="sprinkle-dot" style="left:110px; background:#FFC857;"></div>
-          <div class="sprinkle-dot" style="left:135px; background:#fff;"></div>
-        </div>
-        <div class="tier tier-1">
-          <div class="pearl-border"></div>
-        </div>
-        <div class="cake-plate"></div>
-        <div class="cake-shadow"></div>
-      </div>
-      <p class="body-text" id="candleHint" style="margin-top: 0;">tap the candle</p>
+        <p class="body-text" id="candleHint" style="margin-top: 0;">tap the candle</p>
 
-      <div class="final-message" id="finalMessage">
-        <h1 style="margin-top: 32px;">Happy birthday, Sam! 🎂</h1>
-        <p class="body-text" style="margin-top: 14px;">I hope your wish comes true. Thank you for being you — love you so much, take care always and lagi lang me nandito for you. 💕</p>
-        <div class="music-controls">
-          <button class="music-btn" id="replayConfettiBtn">🎊 Replay confetti</button>
-          <button class="music-btn" id="watchAgainBtn">🔁 Watch again</button>
+        <div class="final-message" id="finalMessage">
+          <h1 style="margin-top: 32px;">Happy birthday, Sam! 🎂</h1>
+          <p class="body-text" style="margin-top: 14px;">I hope your wish comes true. Thank you for being you — love you so much, take care always and lagi lang me nandito for you. 💕</p>
+          <div class="music-controls">
+            <button class="music-btn" id="replayConfettiBtn">🎊 Replay confetti</button>
+            <button class="music-btn" id="watchAgainBtn">🔁 Watch again</button>
+          </div>
         </div>
       </div>
     </div>
@@ -560,10 +593,6 @@
 
 <script>
   // Cross-browser viewport height fix.
-  // Different mobile browsers (Chrome, Brave, Safari, etc.) show/hide their
-  // address bar / toolbar differently, so 100vh / 100dvh reports different
-  // things in each one. This measures the *actual* usable height and stores
-  // it in a CSS variable, so the layout matches on every browser.
   function setRealVH() {
     const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
     document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
@@ -729,7 +758,6 @@
   document.getElementById('watchAgainBtn').addEventListener('click', function(e) {
     e.stopPropagation();
 
-    // remove any leftover confetti pieces from the last candle blow
     document.querySelectorAll('.confetti-piece').forEach(piece => piece.remove());
 
     blown = false;
