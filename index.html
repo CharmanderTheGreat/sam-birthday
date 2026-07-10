@@ -209,22 +209,6 @@
     100% { transform: translateY(-115vh) translateX(-10px) rotate(-3deg); }
   }
 
-  /*
-    FIX: .slide used to be `justify-content: center` on a scrollable
-    flex column. That combo is a known cross-browser bug: some mobile
-    browsers/webviews don't let you scroll "up" into content that
-    got centered past the top edge, so when a slide's content got
-    taller than the screen (like the last slide once the final
-    message + buttons appear), the top of it — including the
-    confetti/replay buttons — became unreachable.
-
-    Fix: the slide itself no longer centers its children. It just
-    stacks them from the top and scrolls normally. Centering (when
-    content is shorter than the screen) is done by the new
-    .slide-content wrapper below using margin: auto 0, which is a
-    trick that centers when there's extra room but never pushes
-    content above the scrollable area when it overflows.
-  */
   .slide {
     position: absolute;
     inset: 0;
@@ -277,13 +261,6 @@
     margin-right: auto;
   }
 
-  /*
-    tap-hint used to be position:absolute pinned to the bottom of the
-    slide. On a scrolling slide that overlaps real content (like the
-    album grid or the cake), so now it's laid out inline after the
-    slide-content instead, still centered, just no longer floating on
-    top of anything.
-  */
   .tap-hint {
     margin-top: 28px;
     font-size: 13px;
@@ -525,7 +502,7 @@
       <div class="slide-content">
         <div class="eyebrow">one wish</div>
         <h2>I hope you're always happy,<br>healthy, and at peace.</h2>
-        <p class="body-text">Whatever happens, just know there's someone who'll always catch you. That's me.</p>
+        <p class="body-text">Whatever happens, just know may isang tao kang maaasahan, kahit anong oras at ako yon.</p>
         <div class="heart-row">💛 🎈 ✨</div>
         <div class="tap-hint">tap for photos →</div>
       </div>
@@ -592,7 +569,6 @@
 </div>
 
 <script>
-  // Cross-browser viewport height fix.
   function setRealVH() {
     const h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
     document.documentElement.style.setProperty('--vh', (h * 0.01) + 'px');
@@ -751,10 +727,6 @@
 
   document.getElementById('replayConfettiBtn').addEventListener('click', function(e) {
     e.stopPropagation();
-    // Spammable: each tap adds a fresh batch on top of whatever's
-    // already falling, instead of clearing it first. Pieces clean
-    // themselves up on their own after they finish falling, so
-    // nothing piles up forever.
     launchConfetti();
   });
 
