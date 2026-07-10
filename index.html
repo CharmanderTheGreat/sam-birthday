@@ -539,6 +539,18 @@
       const bgSong = document.getElementById('bgSong');
       const muteToggle = document.getElementById('muteToggle');
       muteToggle.classList.remove('hidden-toggle');
+
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaElementSource(bgSong);
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.value = 2.5; // boost — itaas o ibaba kung kailangan
+        source.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+      } catch (err) {
+        console.log('Gain boost not applied:', err);
+      }
+
       bgSong.play().catch(() => {});
     } else {
       lockError.classList.add('show');
